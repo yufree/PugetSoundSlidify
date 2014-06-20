@@ -1,0 +1,59 @@
+---
+title       : Explore the Relationship between PCBs and Environmental Factor
+subtitle    : Using Bootstrap Lowess Regression Model
+author      : Yufree
+job         : Ph.D candidate from RCEES CAS
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : [mathjax]            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+## Introduction
+
+1. [Polychlorinated biphenyl](en.wikipedia.org/wiki/Polychlorinated_biphenyl) (PCB) is a synthetic organic chemical compound with similar structure to dioxin
+2. Research has revealed that PCBs may be harmful to human being
+3. Environment survey could tell us the distribution and fate of PCBs in envronmental samples
+4. In this work, I will show you the relationship explore between PCBs concentration and some environmetal factors like the sample depth, the amount of organic material(TOC), The total silt and clay fraction (TF)
+5. Data were got from [U.S. EPA](http://www.epa.gov/pugetsound/bold.html)
+
+---
+
+## Sampling
+
+- The Sediment sampling were down in the summer of 2008
+- Here is the sampling map
+
+```{r cache=TRUE,echo=FALSE,message=FALSE}
+load('pugesound.RData')
+library(raster)
+map <- getData('GADM',country='US',level=1)
+plot(map,axes = T,xlim=c(-124,-122),ylim=c(47,48.9),main='Sampling map')
+points(pugetsound$longitude,pugetsound$latitude,pch=19,col='red')
+```
+
+---
+
+## Relationship Explore
+
+- Here the depth was used to show the relationship explore with a Bootstrap Lowess Regression Model
+
+```{r cache=TRUE,echo=FALSE}
+load('pugesound.RData')
+plot(y=pugetsound$PCBs,x=pugetsound$depth, pch = 20, col = rgb(0, 0, 0, 0.5),ylab = 'Total PCBs concertration (pg/g)', xlab = 'Depth (in feet)', main = 'relationship explore')
+    for (i in 1:500){
+      idx = sample(nrow(pugetsound), replace=TRUE)
+      lines(lowess(y=pugetsound$PCBs[idx], x=pugetsound$depth[idx]), col = rgb(0,0, 0, 0.05), lwd = 1.5) 
+      }
+```
+
+---
+
+## Summary
+
+- It seems that 200 feet and 400 feet were two thresholds for the relationship between PCBs and depth
+- Bootstrap Lowess Regression Model will help to show an intuitional figure to dignose the regression models
+- In the [shinyapp](https://yufree.shinyapps.io/PugetSound/), you may change the environmental factor, subset the data, and change the Bootstrap times as you like
+- Have fun to explore the regression relationship!
